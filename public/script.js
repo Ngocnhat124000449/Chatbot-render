@@ -2,18 +2,28 @@ const form = document.getElementById("chat-form");
 const input = document.getElementById("user-input");
 const messages = document.getElementById("messages");
 
-// Lưu lịch sử hội thoại giữa user và bot
+let stage = "collecting_info";
+let currentQuestionIndex = 0;
+let studentProfile = {};
+const questions = [
+  { key: "name", question: "👋 Xin chào! Bạn tên là gì?" },
+  { key: "age", question: "📅 Bạn bao nhiêu tuổi?" },
+  { key: "major", question: "📚 Ngành học hiện tại của bạn là gì?" },
+  { key: "currentYear", question: "🎓 Bạn đang học năm mấy?" },
+  { key: "careerGoal", question: "🎯 Mục tiêu nghề nghiệp của bạn là gì?" },
+  { key: "learningStyle", question: "📖 Phong cách học tập bạn thích là gì (tự học, nhóm, video, đọc sách...)?" },
+];
+
+// Lịch sử hội thoại
 const chatHistory = [
   {
     role: "system",
     content:
-      "Bạn là một trợ lý AI hữu ích, hãy trả lời câu hỏi của người dùng, hãy trả lời bằng tiếng Việt\n" +
-      "Bây giờ là " +
-      new Date().toLocaleString(),
+      "Bạn là một trợ lý học tập AI, chuyên tư vấn hướng học và kế hoạch cá nhân hóa cho sinh viên Việt Nam.",
   },
 ];
 
-// Gửi form chat
+// Gửi form
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const userMessage = input.value.trim();
@@ -21,11 +31,27 @@ form.addEventListener("submit", async (e) => {
 
   input.value = "";
   addMessage(userMessage, "user");
-  chatHistory.push({ role: "user", content: userMessage });
-  await streamMessage();
+
+  if (stage === "collecting_info") {
+    const currentKey = questions[currentQuestionIndex].key;
+    studentProfile[currentKey] = userMessage;
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < questions.length) {
+      setTimeout(() => addMessage(questions[currentQuestionIndex].question, "bot"), 300);
+    } else {
+      stage = "chatting";
+      const introPrompt = generateIntroPrompt(studentProfile);
+      chatHistory.push({ role: "user", content: introPrompt });
+      await streamMessage();
+    }
+  } else {
+    chatHistory.push({ role: "user", content: userMessage });
+    await streamMessage();
+  }
 });
 
-// Hiển thị tin nhắn mới
+// Hiển thị tin nhắn
 function addMessage(text, sender) {
   const div = document.createElement("div");
   div.className = `message ${sender}`;
@@ -35,14 +61,13 @@ function addMessage(text, sender) {
   return div;
 }
 
-// Hiển thị các tin nhắn ban đầu từ chatHistory
-for (const message of chatHistory) {
-  addMessage(message.content, message.role);
-}
+// Hiển thị câu hỏi đầu tiên
+addMessage(questions[0].question, "bot");
 
-// Gọi API /v1/responses và xử lý stream
+// Gọi API GPT
 async function streamMessage() {
-  const botDiv = addMessage("...", "bot");
+  const botDiv = addMessage("Đang xử lý...", "bot");
+
   try {
     const response = await fetch("/v1/responses", {
       method: "POST",
@@ -56,7 +81,7 @@ async function streamMessage() {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`Lỗi mạng: ${response.status}`);
     }
 
     const json = await response.json();
@@ -65,6 +90,24 @@ async function streamMessage() {
     chatHistory.push({ role: "assistant", content: output_text });
     messages.scrollTop = messages.scrollHeight;
   } catch (error) {
-    botDiv.textContent = "❌ Lỗi phản hồi từ server: " + error.message;
+    botDiv.textContent = "❌ Lỗi: " + error.message;
   }
+}
+
+// Tạo prompt giới thiệu sinh viên
+function generateIntroPrompt(profile) {
+  return (
+    `Dưới đây là thông tin của sinh viên:\n` +
+    `- Họ tên: ${profile.name}\n` +
+    `- Tuổi: ${profile.age}\n` +
+    `- Ngành học: ${profile.major}\n` +
+    `- Năm học: ${profile.currentYear}\n` +
+    `- Mục tiêu nghề nghiệp: ${profile.careerGoal}\n` +
+    `- Phong cách học: ${profile.learningStyle}\n\n` +
+    `Hãy đóng vai trò là cố vấn học tập. Từ các thông tin trên, hãy gợi ý:\n` +
+    `1. Con đường học tập phù hợp\n` +
+    `2. Những kỹ năng cần học\n` +
+    `3. Cách lập kế hoạch học hiệu quả theo phong cách của sinh viên\n` +
+    `Chỉ phản hồi các nội dung trong phạm vi học tập.`
+  );
 }
