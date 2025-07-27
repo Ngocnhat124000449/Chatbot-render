@@ -54,29 +54,33 @@
 
   // Gửi tin nhắn đến server và xử lý phản hồi
   async function sendToGPT() {
-    const botDiv = addMessage("...", "bot"); // chờ phản hồi
+  const botDiv = addMessage("...", "bot"); // chờ phản hồi
 
-    try {
-      const response = await fetch("/v1/responses", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",
-          input: chatHistory,
-        }),
-      });
+  try {
+    const response = await fetch("/v1/responses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        input: chatHistory,
+      }),
+    });
 
-      const json = await response.json();
-      const output_text = json?.output?.[0]?.content?.[0]?.text || "⚠️ Không có phản hồi từ chatbot.";  
+    const json = await response.json();
+    const output_text = json?.output?.[0]?.content?.[0]?.text || "⚠️ Không có phản hồi từ chatbot.";
 
-      botDiv.innerHTML = output_text.replace(/\n/g, "<br>");
-      chatHistory.push({ role: "assistant", content: output_text });
-    } catch (error) {
-      botDiv.textContent = "❌ Lỗi: " + error.message;
-    }
+    botDiv.innerHTML = ""; // Xóa dấu "..."
+    typeText(botDiv, output_text); // Gõ từng chữ
+
+    chatHistory.push({ role: "assistant", content: output_text });
+
+  } catch (error) {
+    botDiv.textContent = "❌ Lỗi: " + error.message;
   }
+}
+
 
   // Khởi động khi trang load
   window.addEventListener("DOMContentLoaded", () => {
