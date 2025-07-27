@@ -61,18 +61,18 @@ body {
 }
 
 #user-input {
-    flex: 1;
-  font-size: 1rem;
-  padding: 0.75rem;
-  border-radius: 6px;
-  resize: none;
-  overflow-y: hidden; /* để không hiện scrollbar */
-  border: 1px solid #ccc;
+    resize: none;
+  overflow-y: hidden;
+  padding: 1rem;
+  border: none;
   outline: none;
-  max-height: 150px; /* giới hạn chiều cao */
-  line-height: 1.5;
-  min-height: 40px;
-  box-sizing: border-box;
+  font-size: 1rem;
+  font-family: sans-serif;
+  width: 100%;
+  line-height: 1.4;
+  border-radius: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 button {

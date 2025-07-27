@@ -88,8 +88,10 @@ form.addEventListener("submit", async (e) => {
 
   sendToGPT();
 });
-const textarea = document.getElementById("user-input");
-textarea.addEventListener("input", () => {
-  textarea.style.height = "auto"; // reset chiều cao
-  textarea.style.height = textarea.scrollHeight + "px"; // đặt lại theo nội dung
+const userInput = document.getElementById('user-input');
+
+userInput.addEventListener('input', () => {
+  userInput.style.height = 'auto'; // reset
+  userInput.style.height = userInput.scrollHeight + 'px'; // fit nội dung
 });
+
