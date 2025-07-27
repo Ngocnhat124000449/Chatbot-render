@@ -53,8 +53,11 @@ body {
     }
 
 #chat-form {
-    display: flex;
-    border-top: 1px solid #ccc;
+     display: flex;
+  align-items: flex-end; /* giúp button nằm ở dưới nếu textarea cao hơn */
+  border-top: 1px solid #ccc;
+  padding: 0.5rem;
+  gap: 0.5rem; /* khoảng cách giữa ô nhập và nút gửi */
 }
 
 #user-input {
