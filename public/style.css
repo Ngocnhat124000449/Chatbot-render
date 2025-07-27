@@ -37,14 +37,16 @@ body {
 
     .message.user {
         align-self: flex-end;
-    background-color: #e0f0ff;
-    color: #004085;
+        background-color: #d1e7ff;
+        text-align: right;
+        color: #003366;
     }
 
     .message.bot {
         align-self: flex-start;
-    background-color: #e6ffe6;
-    color: #155724;
+        background-color: #e6ffe6;
+        text-align: left;
+        color: #003300;
     }
 
 #chat-form {
