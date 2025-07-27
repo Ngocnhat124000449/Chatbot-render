@@ -2,10 +2,8 @@ const form = document.getElementById("chat-form");
 const input = document.getElementById("user-input");
 const messages = document.getElementById("messages");
 
-
-
-// Lịch sử hội thoại
-const historychat = [
+// Lịch sử hội thoại với system prompt ban đầu
+const chatHistory = [
   {
     role: "system",
     content: `
@@ -50,37 +48,20 @@ Kết quả:
   }
 ];
 
-
-
-// Gửi form
+// 📨 Gửi form
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const userMessage = input.value.trim();
   if (!userMessage) return;
 
-  input.value = ""; 
+  input.value = "";
   addMessage(userMessage, "user");
 
-  if (stage === "collecting_info") {
-    const currentKey = questions[currentQuestionIndex].key;
-    studentProfile[currentKey] = userMessage;
-    currentQuestionIndex++;
-
-    if (currentQuestionIndex < questions.length) {
-      setTimeout(() => addMessage(questions[currentQuestionIndex].question, "bot"), 300);
-    } else {
-      stage = "chatting";
-      const introPrompt = generateIntroPrompt(studentProfile);
-      chatHistory.push({ role: "user", content: introPrompt });
-      await streamMessage();
-    }
-  } else {
-    chatHistory.push({ role: "user", content: userMessage });
-    await streamMessage();
-  }
+  chatHistory.push({ role: "user", content: userMessage });
+  await streamMessage();
 });
 
-// Hiển thị tin nhắn
+// 📩 Hiển thị tin nhắn
 function addMessage(text, sender) {
   const div = document.createElement("div");
   div.className = `message ${sender}`;
@@ -90,10 +71,7 @@ function addMessage(text, sender) {
   return div;
 }
 
-// Hiển thị câu hỏi đầu tiên
-addMessage(questions[0].question, "bot");
-
-// Gọi API GPT
+// 🚀 Gọi API GPT qua proxy
 async function streamMessage() {
   const botDiv = addMessage("Đang xử lý...", "bot");
 
@@ -115,28 +93,11 @@ async function streamMessage() {
 
     const json = await response.json();
     const output_text = json.output[0].content[0].text;
+
     botDiv.textContent = output_text;
     chatHistory.push({ role: "assistant", content: output_text });
     messages.scrollTop = messages.scrollHeight;
   } catch (error) {
     botDiv.textContent = "❌ Lỗi: " + error.message;
   }
-}
-
-// Tạo prompt giới thiệu sinh viên
-function generateIntroPrompt(profile) {
-  return (
-    `Dưới đây là thông tin của sinh viên:\n` +
-    `- Họ tên: ${profile.name}\n` +
-    `- Tuổi: ${profile.age}\n` +
-    `- Ngành học: ${profile.major}\n` +
-    `- Năm học: ${profile.currentYear}\n` +
-    `- Mục tiêu nghề nghiệp: ${profile.careerGoal}\n` +
-    `- Phong cách học: ${profile.learningStyle}\n\n` +
-    `Hãy đóng vai trò là cố vấn học tập. Từ các thông tin trên, hãy gợi ý:\n` +
-    `1. Con đường học tập phù hợp\n` +
-    `2. Những kỹ năng cần học\n` +
-    `3. Cách lập kế hoạch học hiệu quả theo phong cách của sinh viên\n` +
-    `Chỉ phản hồi các nội dung trong phạm vi học tập.`
-  );
 }
