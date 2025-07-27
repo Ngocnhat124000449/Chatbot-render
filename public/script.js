@@ -61,9 +61,9 @@ async function sendToGPT() {
     });
 
     const json = await response.json();
-    const output_text = json?.output?.[0]?.content?.[0]?.text || "⚠️ Không có phản hồi từ chatbot.";
+    const output_text = json?.output?.[0]?.content?.[0]?.text || "⚠️ Không có phản hồi từ chatbot.";  
 
-    botDiv.textContent = output_text;
+    botDiv.innerHTML = output_text.replace(/\n/g, "<br>");
     chatHistory.push({ role: "assistant", content: output_text });
   } catch (error) {
     botDiv.textContent = "❌ Lỗi: " + error.message;
