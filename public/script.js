@@ -114,5 +114,18 @@
     form.requestSubmit(); // Kích hoạt sự kiện submit form
   }
 });
+function typeText(element, text, speed = 20) {
+  let i = 0;
+  function typing() {
+    if (i < text.length) {
+      const char = text[i] === "\n" ? "<br>" : text[i];
+      element.innerHTML += char;
+      messages.scrollTop = messages.scrollHeight; // auto scroll xuống cuối
+      i++;
+      setTimeout(typing, speed);
+    }
+  }
+  typing();
+}
 
 
