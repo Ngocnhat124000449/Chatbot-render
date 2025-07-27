@@ -39,16 +39,13 @@
   const div = document.createElement("div");
   div.className = `message ${sender}`;
   div.innerHTML = text.replace(/\n/g, "<br>"); // Hỗ trợ xuống dòng
+
   messages.appendChild(div);
 
-  // Đợi DOM render xong rồi mới cuộn
+  // Đợi DOM cập nhật xong rồi mới cuộn
   setTimeout(() => {
     messages.scrollTop = messages.scrollHeight;
   }, 0);
-
-  return div;
-}
-
 
   return div;
 }
@@ -98,8 +95,7 @@
 
     sendToGPT();
   });
-
-
+  
   const userInput = document.getElementById('user-input');
 
   userInput.addEventListener('input', () => {
