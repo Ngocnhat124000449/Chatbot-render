@@ -59,10 +59,14 @@ body {
 
 #user-input {
     flex: 1;
-    padding: 1rem;
-    border: none;
-    outline: none;
-    font-size: 1rem;
+  padding: 1rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  resize: none;
+  overflow-y: auto;
+  max-height: 200px; /* Giới hạn chiều cao nếu cần */
+  line-height: 1.4;
 }
 
 button {
