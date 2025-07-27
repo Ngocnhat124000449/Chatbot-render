@@ -38,11 +38,12 @@ Hãy nhớ: Bạn không chỉ là chatbot, bạn là người đồng hành gi�
 function addMessage(text, sender) {
   const div = document.createElement("div");
   div.className = `message ${sender}`;
-  div.textContent = text;
+  div.innerHTML = text.replace(/\n/g, "<br>"); // Hỗ trợ xuống dòng
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
   return div;
 }
+
 
 // Gửi tin nhắn đến server và xử lý phản hồi
 async function sendToGPT() {
