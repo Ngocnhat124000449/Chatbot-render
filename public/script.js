@@ -5,7 +5,7 @@ const messages = document.getElementById("messages");
 
 
 // Lịch sử hội thoại
-const chat = [
+const historychat = [
   {
     role: "system",
     content: `
