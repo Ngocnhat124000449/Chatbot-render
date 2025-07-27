@@ -23,68 +23,6 @@ Hãy bắt đầu cuộc trò chuyện một cách thân thiện và dẫn dắt
   }
 ];
 
-// Tự gửi lời chào khi trang load
-window.addEventListener("DOMContentLoaded", async () => {
-  const botDiv = addMessage("Đang khởi động chatbot...", "bot");
-
-  try {
-    const response = await fetch("/v1/responses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        input: chatHistory,
-      }),
-    });
-
-    const json = await response.json();
-    const output_text = json.output[0].content[0].text;
-
-    botDiv.textContent = output_text;
-    chatHistory.push({ role: "assistant", content: output_text });
-    messages.scrollTop = messages.scrollHeight;
-  } catch (error) {
-    botDiv.textContent = "❌ Lỗi khởi động: " + error.message;
-  }
-});
-
-// Người dùng gửi câu mới
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const userMessage = input.value.trim();
-  if (!userMessage) return;
-
-  input.value = "";
-  addMessage(userMessage, "user");
-  chatHistory.push({ role: "user", content: userMessage });
-
-  const botDiv = addMessage("Đang trả lời...", "bot");
-
-  try {
-    const response = await fetch("/v1/responses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4o",
-        input: chatHistory,
-      }),
-    });
-
-    const json = await response.json();
-    const output_text = json.output[0].content[0].text;
-
-    botDiv.textContent = output_text;
-    chatHistory.push({ role: "assistant", content: output_text });
-    messages.scrollTop = messages.scrollHeight;
-  } catch (error) {
-    botDiv.textContent = "❌ Lỗi: " + error.message;
-  }
-});
-
 // Hàm hiển thị tin nhắn
 function addMessage(text, sender) {
   const div = document.createElement("div");
@@ -94,3 +32,47 @@ function addMessage(text, sender) {
   messages.scrollTop = messages.scrollHeight;
   return div;
 }
+
+// Gửi tin nhắn đến server và xử lý phản hồi
+async function sendToGPT() {
+  const botDiv = addMessage("...", "bot"); // chờ phản hồi
+
+  try {
+    const response = await fetch("/v1/responses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        input: chatHistory,
+      }),
+    });
+
+    const json = await response.json();
+    const output_text = json?.output?.[0]?.content?.[0]?.text || "⚠️ Không có phản hồi từ chatbot.";
+
+    botDiv.textContent = output_text;
+    chatHistory.push({ role: "assistant", content: output_text });
+  } catch (error) {
+    botDiv.textContent = "❌ Lỗi: " + error.message;
+  }
+}
+
+// Khởi động khi trang load
+window.addEventListener("DOMContentLoaded", () => {
+  sendToGPT();
+});
+
+// Gửi khi người dùng nhập
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const userMessage = input.value.trim();
+  if (!userMessage) return;
+
+  input.value = "";
+  addMessage(userMessage, "user");
+  chatHistory.push({ role: "user", content: userMessage });
+
+  sendToGPT();
+});
