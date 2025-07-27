@@ -24,22 +24,25 @@ body {
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
+    display: flex;
+  flex-direction: column;
 }
 
 .message {
-     margin-bottom: 1rem;
-    padding: 0.75rem 1rem;
-    border-radius: 12px;
-    max-width: 80%;
-    word-wrap: break-word;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+     padding: 12px;
+    margin: 8px;
+    border-radius: 10px;
+    max-width: 70%;
+    word-break: break-word;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
     .message.user {
-        align-self: flex-end;
+        align-self: flex-end; /* Đẩy toàn bộ khối về bên phải */
         background-color: #d1e7ff;
-        text-align: right;
+        text-align: left;
         color: #003366;
+        border-radius: 12px 12px 0 12px;
     }
 
     .message.bot {
