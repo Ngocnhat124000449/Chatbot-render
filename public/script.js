@@ -38,12 +38,17 @@
   function addMessage(text, sender) {
   const div = document.createElement("div");
   div.className = `message ${sender}`;
-  div.innerHTML = text.replace(/\n/g, "<br>");
+  div.innerHTML = text.replace(/\n/g, "<br>"); // Hỗ trợ xuống dòng
   messages.appendChild(div);
 
-  requestAnimationFrame(() => {
+  // Đợi DOM render xong rồi mới cuộn
+  setTimeout(() => {
     messages.scrollTop = messages.scrollHeight;
-  });
+  }, 0);
+
+  return div;
+}
+
 
   return div;
 }
