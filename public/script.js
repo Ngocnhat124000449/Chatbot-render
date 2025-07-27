@@ -36,13 +36,18 @@
 
   // Hàm hiển thị tin nhắn
   function addMessage(text, sender) {
-    const div = document.createElement("div");
-    div.className = `message ${sender}`;
-    div.innerHTML = text.replace(/\n/g, "<br>"); // Hỗ trợ xuống dòng
-    messages.appendChild(div);
+  const div = document.createElement("div");
+  div.className = `message ${sender}`;
+  div.innerHTML = text.replace(/\n/g, "<br>");
+  messages.appendChild(div);
+
+  requestAnimationFrame(() => {
     messages.scrollTop = messages.scrollHeight;
-    return div;
-  }
+  });
+
+  return div;
+}
+
 
 
   // Gửi tin nhắn đến server và xử lý phản hồi
@@ -88,12 +93,16 @@
 
     sendToGPT();
   });
+
+
   const userInput = document.getElementById('user-input');
 
   userInput.addEventListener('input', () => {
     userInput.style.height = 'auto'; // reset
     userInput.style.height = userInput.scrollHeight + 'px'; // fit nội dung
   });
+
+
   userInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault(); // Ngăn xuống dòng
