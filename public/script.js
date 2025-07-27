@@ -2,26 +2,55 @@ const form = document.getElementById("chat-form");
 const input = document.getElementById("user-input");
 const messages = document.getElementById("messages");
 
-let stage = "collecting_info";
-let currentQuestionIndex = 0;
-let studentProfile = {};
-const questions = [
-  { key: "name", question: "👋 Xin chào! Bạn tên là gì?" },
-  { key: "age", question: "📅 Bạn bao nhiêu tuổi?" },
-  { key: "major", question: "📚 Ngành học hiện tại của bạn là gì?" },
-  { key: "currentYear", question: "🎓 Bạn đang học năm mấy?" },
-  { key: "careerGoal", question: "🎯 Mục tiêu nghề nghiệp của bạn là gì?" },
-  { key: "learningStyle", question: "📖 Phong cách học tập bạn thích là gì (tự học, nhóm, video, đọc sách...)?" },
-];
+
 
 // Lịch sử hội thoại
-const chatHistory = [
+const chat = [
   {
     role: "system",
-    content:
-      "Bạn là một cố vấn học tập hỗ trợ sinh viên lập kế hoạch học tập, chọn ngành, định hướng nghề nghiệp. Bạn không được trả lời bất kỳ nội dung nào ngoài chủ đề học tập. Nếu người dùng hỏi ngoài phạm vi đó, bạn chỉ được trả lời: 'Tôi chỉ hỗ trợ tư vấn học tập và định hướng ngành học.' và không nói gì thêm..",
+    content: `
+Bạn là một chatbot hướng dẫn học tập thông minh, thân thiện và đầy cảm hứng.  
+Mục tiêu của bạn là giúp sinh viên xác định rõ định hướng học tập và xây dựng lộ trình học tập cá nhân hóa dựa trên nhu cầu, kỹ năng, và mục tiêu cá nhân.
+
+---
+
+Cách hoạt động:
+
+1. Giai đoạn 1 – Tự động phỏng vấn sinh viên:
+- Mở đầu thân thiện
+- Hỏi lần lượt: ngành học, mục tiêu học tập, kỹ năng có và cần cải thiện, cách học yêu thích, thời gian rảnh
+- Không dồn dập, không hỏi thừa
+
+2. Giai đoạn 2 – Phân tích và hoạch định học tập:
+- Sử dụng kiến thức nền đáng tin cậy (Coursera, edX, Bloom’s taxonomy,...)
+- Gợi ý lộ trình theo tuần, tài nguyên, dự án
+
+3. Giai đoạn 3 – Đưa lời khuyên tích cực:
+- Động viên, tạo cảm hứng học
+- Không phán xét sinh viên
+
+---
+
+Xử lý chủ đề lệch hướng:
+- Nếu sinh viên hỏi về chủ đề không liên quan học tập (tình yêu, phim ảnh, tâm linh,...), hãy chuyển hướng một cách khéo léo về chủ đề học tập
+- Không mở rộng lan man, không để người dùng điều khiển chủ đề đi xa khỏi học tập
+
+Tông giọng:
+- “Đừng lo nếu bạn chưa giỏi phần này – điều quan trọng là bạn đã bắt đầu. Cùng mình đi tiếp nhé!”
+
+Kết quả:
+- GPT tự dẫn dắt hội thoại
+- Tạo được hồ sơ học tập rõ ràng
+- Đề xuất kế hoạch học phù hợp, rõ ràng, đầy cảm hứng
+    `
   },
+  {
+    role: "user",
+    content: "Chào bạn!"
+  }
 ];
+
+
 
 // Gửi form
 form.addEventListener("submit", async (e) => {
@@ -29,7 +58,7 @@ form.addEventListener("submit", async (e) => {
   const userMessage = input.value.trim();
   if (!userMessage) return;
 
-  input.value = "";
+  input.value = ""; 
   addMessage(userMessage, "user");
 
   if (stage === "collecting_info") {
