@@ -114,7 +114,7 @@
     form.requestSubmit(); // Kích hoạt sự kiện submit form
   }
 });
-function typeText(element, text, speed = 20) {
+function typeText(element, text, speed = 50) {
   let i = 0;
   function typing() {
     if (i < text.length) {
