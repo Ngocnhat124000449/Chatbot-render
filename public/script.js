@@ -1,9 +1,9 @@
-  const form = document.getElementById("chat-form");
+  const form = document.getElementById("chat-form");  // Khai báo những phần tử cần dùng từ file html
   const input = document.getElementById("user-input");
   const messages = document.getElementById("messages");
 
   // Lịch sử hội thoại
-  const chatHistory = [
+  const chatHistory = [ // Hướng dẫn gpt cách phản hồi
     {
       role: "system",
       content: `
@@ -28,7 +28,7 @@
       `
     },
     {
-      role: "user",
+      role: "user", // Tin nhắn tự gửi để tạo cảm giác gpt như một cố vấn thật, cuộc trò chuyện tự nhiên hơn.
       content: "Chào bạn!"
     }
   ];
@@ -54,7 +54,7 @@
 
   // Gửi tin nhắn đến server và xử lý phản hồi
   async function sendToGPT() {
-  const botDiv = addMessage("...", "bot"); // chờ phản hồi
+  const botDiv = addMessage("Đang suy nghĩ...", "bot"); // chờ phản hồi
 
   try {
     const response = await fetch("/v1/responses", {
