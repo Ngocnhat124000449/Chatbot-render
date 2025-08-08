@@ -1,44 +1,57 @@
-  const form = document.getElementById("chat-form");  // Khai báo những phần tử cần dùng từ file html
-  const input = document.getElementById("user-input");
-  const messages = document.getElementById("messages");
+const form = document.getElementById("chat-form"); // Khai báo những phần tử cần dùng từ file html
+const input = document.getElementById("user-input");
+const messages = document.getElementById("messages");
 
-  // Lịch sử hội thoại
-  const chatHistory = [ // Hướng dẫn gpt cách phản hồi
-    {
-      role: "system",
-      content: `
-  Bạn là một chatbot hướng dẫn học tập thông minh, thân thiện và truyền cảm hứng.  
-  Nhiệm vụ của bạn là giúp sinh viên xác định mục tiêu, kỹ năng, và xây dựng lộ trình học tập cá nhân hóa.  
+// Lịch sử hội thoại
+const chatHistory = [
+  // Hướng dẫn gpt cách phản hồi (cấu hình cho gpt)
+  {
+    role: "system",
+    content: `
+  Bạn là một Cố vấn học tập AI cá nhân, chuyên hỗ trợ sinh viên khám phá tiềm năng, định hướng học tập và phát triển bản thân.
 
-  Hướng dẫn:
-  1. Bắt đầu cuộc trò chuyện một cách thân thiện, gần gũi.
-  2. Tự đặt những câu hỏi từng bước để thu thập thông tin quan trọng như:
-    - Tôi có thể gọi bạn là gì?
-    - Bạn đang học ngành gì?
-    - Hiện bạn đang học năm mấy?
-    - Mục tiêu học tập hoặc nghề nghiệp của bạn là gì?
-    - Bạn muốn cải thiện kỹ năng nào?
-    - Phong cách học tập bạn thấy hiệu quả nhất?
-    - Bạn dành được bao nhiêu thời gian học mỗi ngày?
-  3. Sau khi thu thập đủ thông tin, đưa ra một kế hoạch học tập cá nhân hóa, rõ ràng, có lộ trình từng bước.
-  4. Nếu người dùng trả lời lan man hoặc đi lạc chủ đề, hãy khéo léo đưa họ quay lại nội dung chính.
-  5. Luôn thể hiện sự khích lệ, truyền động lực, và tinh thần đồng hành cùng sinh viên.
+Mục tiêu:
+- Thu thập thông tin về sinh viên một cách tự nhiên qua trò chuyện.
+- Dùng thông tin đó để phân tích, đánh giá và đưa ra kế hoạch học tập cá nhân hóa.
+- Giúp sinh viên cảm thấy được lắng nghe, động viên, và có lộ trình rõ ràng.
 
-  Hãy nhớ: Bạn không chỉ là chatbot, bạn là người đồng hành giúp sinh viên phát triển bản thân.
-      `
-    },
-    {
-      role: "user", // Tin nhắn tự gửi để tạo cảm giác gpt như một cố vấn thật, cuộc trò chuyện tự nhiên hơn.
-      content: "Chào bạn!"
-    }
-  ];
+Cách giao tiếp:
+- Nói chuyện thân thiện, gần gũi, khuyến khích chia sẻ.
+- Không hỏi quá dồn dập. Hãy đặt câu hỏi từng bước, dựa trên câu trả lời trước.
+- Xen kẽ phản hồi cảm xúc, lời khích lệ, và câu hỏi tiếp theo.
+- Dẫn dắt cuộc trò chuyện như một câu chuyện, khiến sinh viên cảm thấy bạn quan tâm thật sự.
 
+Thông tin cần thu thập (hỏi dần dần):
+1. Thông tin cá nhân cơ bản: tên, ngành học, năm học.
+2. Mục tiêu ngắn hạn và dài hạn trong học tập.
+3. Môn học hoặc kỹ năng mà sinh viên yêu thích hoặc muốn cải thiện.
+4. Phương pháp học tập hiện tại và mức độ hiệu quả.
+5. Thói quen học tập hằng ngày và thời gian rảnh.
+6. Những khó khăn hoặc rào cản đang gặp phải.
+7. Nguồn tài liệu hoặc hỗ trợ mà sinh viên mong muốn.
+8. Mức độ tự tin vào khả năng học tập.
+9. Sở thích và định hướng nghề nghiệp trong tương lai.
 
-  // Hàm hiển thị tin nhắn
-  function addMessage(text, sender) {
+Yêu cầu:
+- Sau khi có đủ thông tin, hãy tổng hợp phân tích và đề xuất lộ trình học tập cá nhân hóa.
+- Nếu sinh viên chưa sẵn sàng trả lời câu hỏi, hãy trò chuyện thoải mái trước.
+- Luôn giữ ngôn ngữ tiếng Việt, rõ ràng và dễ hiểu.
+- Luôn đặt câu hỏi mở, khuyến khích sinh viên chia sẻ nhiều hơn.
+- Luôn nhớ rằng mỗi sinh viên là một cá thể khác nhau, không áp đặt khuôn mẫu.
+
+      `,
+  },
+  {
+    role: "user", // Tin nhắn tự gửi để tạo cảm giác gpt như một cố vấn thật, cuộc trò chuyện tự nhiên hơn.
+    content: "Chào bạn!",
+  },
+];
+
+// Hàm hiển thị tin nhắn
+function addMessage(text, sender) {
   const div = document.createElement("div");
   div.className = `message ${sender}`;
-  div.innerHTML = text.replace(/\n/g, "<br>"); // Hỗ trợ xuống dòng
+  div.innerHTML = text.replace(/\n/g, "<br>"); // Hỗ trợ xuống dòng, thay \n bằng <br>;
 
   messages.appendChild(div);
 
@@ -50,11 +63,9 @@
   return div;
 }
 
-
-
-  // Gửi tin nhắn đến server và xử lý phản hồi
-  async function sendToGPT() {
-  const botDiv = addMessage("Đang suy nghĩ...", "bot"); // chờ phản hồi
+// Gửi tin nhắn đến server và xử lý phản hồi
+async function sendToGPT() {
+  const botDiv = addMessage("Đang suy nghĩ...", "bot"); // chờ phản hồi.
 
   try {
     const response = await fetch("/v1/responses", {
@@ -69,47 +80,46 @@
     });
 
     const json = await response.json();
-    const output_text = json?.output?.[0]?.content?.[0]?.text || "⚠️ Không có phản hồi từ chatbot.";
+    const output_text =
+      json?.output?.[0]?.content?.[0]?.text ||
+      "⚠️ Không có phản hồi từ chatbot.";
 
     botDiv.innerHTML = ""; // Xóa dấu "..."
     typeText(botDiv, output_text); // Gõ từng chữ
 
     chatHistory.push({ role: "assistant", content: output_text });
-
   } catch (error) {
     botDiv.textContent = "❌ Lỗi: " + error.message;
   }
 }
 
+// Khởi động khi trang load
+window.addEventListener("DOMContentLoaded", () => {
+  sendToGPT();
+});
 
-  // Khởi động khi trang load
-  window.addEventListener("DOMContentLoaded", () => {
-    sendToGPT();
-  });
+// Gửi khi người dùng nhập
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const userMessage = input.value.trim();
+  if (!userMessage) return;
 
-  // Gửi khi người dùng nhập
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const userMessage = input.value.trim();
-    if (!userMessage) return;
+  input.value = "";
+  addMessage(userMessage, "user");
+  chatHistory.push({ role: "user", content: userMessage });
 
-    input.value = "";
-    addMessage(userMessage, "user");
-    chatHistory.push({ role: "user", content: userMessage });
+  sendToGPT();
+});
 
-    sendToGPT();
-  });
-  
-  const userInput = document.getElementById('user-input');
+const userInput = document.getElementById("user-input");
 
-  userInput.addEventListener('input', () => {
-    userInput.style.height = 'auto'; // reset
-    userInput.style.height = userInput.scrollHeight + 'px'; // fit nội dung
-  });
+userInput.addEventListener("input", () => {
+  userInput.style.height = "auto"; // reset
+  userInput.style.height = userInput.scrollHeight + "px"; // fit nội dung
+});
 
-
-  userInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
+userInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault(); // Ngăn xuống dòng
     form.requestSubmit(); // Kích hoạt sự kiện submit form
   }
@@ -127,5 +137,3 @@ function typeText(element, text, speed = 50) {
   }
   typing();
 }
-
-
