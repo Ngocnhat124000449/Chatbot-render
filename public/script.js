@@ -235,7 +235,7 @@ userInput.addEventListener("keydown", (e) => {
     form.requestSubmit(); // Kích hoạt sự kiện submit form
   }
 });
-function typeText(element, text, speed = 50) {
+function typeText(element, text, speed = 20) {
   let i = 0;
   function typing() {
     if (i < text.length) {
